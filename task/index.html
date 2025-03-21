@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geonames API Table</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h2>Geonames API Data Fetcher</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>API Name</th>
+                <th>API Description</th>
+                <th>Input</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Cities</td>
+                <td>Find cities by name</td>
+                <td><input type="text" id="citiesInput" placeholder="Enter city name"></td>
+                <td><button onclick="fetchData('cities')">Submit</button></td>
+            </tr>
+            <tr>
+                <td>Earthquakes</td>
+                <td>Find recent earthquakes</td>
+                <td>
+                    <label>North: <input type="number" id="north"></label>
+                    <br>
+                    <label>South: <input type="number" id="south"></label>
+                    <br>
+                    <label>East: <input type="number" id="east"></label>
+                    <br>
+                    <label>West: <input type="number" id="west"></label>
+                    <br>
+                </td>
+                <td><button onclick="fetchData('earthquakes')">Submit</button></td>
+            </tr>
+            <tr>
+                <td>Timezone</td>
+                <td>Get timezone by coordinates</td>
+                <td>
+                    <label>Latitude: <input type="number" id="timezoneLat"></label>
+                    <label>Longitude: <input type="number" id="timezoneLng"></label>
+                </td>
+                <td><button onclick="fetchData('timezone')">Submit</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Results:</h3>
+    <div id="output"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
