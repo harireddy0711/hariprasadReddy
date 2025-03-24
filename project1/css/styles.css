@@ -1,11 +1,50 @@
-html, body {
+body, html {
     margin: 0;
     padding: 0;
+    width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 
 #map {
-    width: 100vw;
+    width: 100%;
     height: 100vh;
 }
+
+.top-bar {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: white;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.sidebar {
+    position: absolute;
+    left: 10px;
+    top: 70px; 
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    gap: 10px; 
+}
+
+.sidebar .btn {
+    width: 150px;  
+    height: 40px;  
+    text-align: left; 
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding-left: 10px;
+}
+
+#infoButton {
+    background-color: #007bff;
+    color: white;
+}
+
+
+
