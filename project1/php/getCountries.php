@@ -23,10 +23,6 @@ foreach ($geoJson['features'] as $feature) {
     ];
 }
 
-// Sort countries alphabetically
-usort($countries, function ($a, $b) {
-    return strcmp($a['name'], $b['name']);
-});
-
+usort($countries, fn($a, $b) => strcmp($a['name'], $b['name']));
 echo json_encode($countries);
 ?>
