@@ -3,48 +3,57 @@ body, html {
     padding: 0;
     width: 100%;
     height: 100%;
-}
-
-#map {
-    width: 100%;
+    overflow: hidden;
+  }
+  
+  #map {
+    width: 100vw;
     height: 100vh;
-}
-
-.top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  .top-bar {
     position: absolute;
     top: 10px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1000;
     background: white;
-    padding: 5px;
-    border-radius: 5px;
-}
-
-.sidebar {
-    position: absolute;
-    left: 10px;
-    top: 70px; 
-    display: flex;
-    flex-direction: column;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     z-index: 1000;
-    gap: 10px; 
-}
-
-.sidebar .btn {
-    width: 150px;  
-    height: 40px;  
-    text-align: left; 
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    padding-left: 10px;
-}
-
-#infoButton {
-    background-color: #007bff;
-    color: white;
-}
-
-
-
+  }
+  
+  .top-bar select {
+    font-size: 18px;
+  }
+  
+  .modal-body img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+  }
+  
+  .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+  }
+  
+  .modal-content {
+    border-radius: 10px;
+  }
+  
+  img {
+    border-radius: 8px;
+  }
+  .easy-button-button {
+    background-color: #007bff !important;
+    color: white !important;
+    border-radius: 10px;
+  }
+  .easy-button-button:hover {
+    background-color: #0056b3 !important;
+  }
