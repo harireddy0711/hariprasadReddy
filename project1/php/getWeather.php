@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: application/json");
 
-$apiKey = "ca1cb03649402b80770e2e5cfc7b425b";  
+$apiKey = "ca1cb03649402b80770e2e5cfc7b425b";
 $countryCode = $_GET['code'] ?? '';
 
 if (!$countryCode) {
@@ -9,7 +9,6 @@ if (!$countryCode) {
     exit;
 }
 
-// Fetch country data to get capital city
 $countryInfoUrl = "https://restcountries.com/v3.1/alpha/$countryCode";
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $countryInfoUrl);
@@ -24,9 +23,8 @@ if (!$countryData || empty($countryData[0]['capital'])) {
 }
 
 $capitalCity = $countryData[0]['capital'][0];
-
-// Fetch weather data using capital city
 $weatherUrl = "https://api.openweathermap.org/data/2.5/weather?q=$capitalCity&appid=$apiKey&units=metric";
+
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $weatherUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

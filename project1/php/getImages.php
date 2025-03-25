@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: application/json");
 
-$accessKey = "OHqb5Y819w6kEn-QuefFHfluJQFWfOtW2aRSuuYiPHI"; 
+$accessKey = "OHqb5Y819w6kEn-QuefFHfluJQFWfOtW2aRSuuYiPHI";
 
 if (!isset($_GET['country']) || empty($_GET['country'])) {
     echo json_encode(["error" => "No country specified"]);
@@ -11,7 +11,6 @@ if (!isset($_GET['country']) || empty($_GET['country'])) {
 $country = urlencode($_GET['country']);
 $api_url = "https://api.unsplash.com/search/photos?query=$country&client_id=$accessKey&per_page=6";
 
-// Use cURL to fetch images
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $api_url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
