@@ -7,6 +7,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const countrySelect = document.getElementById("countrySelect");
 
+  let cityClusterGroup = L.markerClusterGroup();
+  let airportClusterGroup = L.markerClusterGroup();
+  const overlays = {
+    "Cities": cityClusterGroup,
+    "Airports": airportClusterGroup
+  };
+
+  L.control.layers(null, overlays).addTo(map);
+
+  // Load countries into dropdown
   fetch("php/getCountries.php")
     .then(res => res.json())
     .then(data => {
@@ -30,8 +40,47 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         const layer = L.geoJSON(data, { color: "red" }).addTo(map);
         map.fitBounds(layer.getBounds());
+
+        loadCityMarkers(code);
+        loadAirportMarkers(code);
       });
   });
+
+  function loadCityMarkers(code) {
+    fetch(`php/getGeoMarkers.php?code=${code}`)
+      .then(res => res.json())
+      .then(data => {
+        map.removeLayer(cityClusterGroup);
+        cityClusterGroup = L.markerClusterGroup();
+
+        data.forEach(marker => {
+          const m = L.marker([marker.lat, marker.lng])
+            .bindPopup(`<strong>${marker.name}</strong><br>Population: ${marker.population}`);
+          cityClusterGroup.addLayer(m);
+        });
+
+        overlays["Cities"] = cityClusterGroup;
+        map.addLayer(cityClusterGroup);
+      });
+  }
+
+  function loadAirportMarkers(code) {
+    fetch(`php/getAirports.php?code=${code}`)
+      .then(res => res.json())
+      .then(data => {
+        map.removeLayer(airportClusterGroup);
+        airportClusterGroup = L.markerClusterGroup();
+
+        data.forEach(marker => {
+          const m = L.marker([marker.lat, marker.lng])
+            .bindPopup(`<strong>Airport:</strong> ${marker.name}`);
+          airportClusterGroup.addLayer(m);
+        });
+
+        overlays["Airports"] = airportClusterGroup;
+        map.addLayer(airportClusterGroup);
+      });
+  }
 
   function showModal(url, modalId, handler) {
     fetch(url)
@@ -42,8 +91,33 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
+  const searchInput = document.getElementById("searchCountryInput");
+  const searchBtn = document.getElementById("searchCountryBtn");
+
+  searchBtn.addEventListener("click", () => {
+    const query = searchInput.value.trim().toLowerCase();
+    if (!query) return;
+
+    for (let i = 0; i < countrySelect.options.length; i++) {
+      const option = countrySelect.options[i];
+      if (option.text.toLowerCase() === query) {
+        countrySelect.value = option.value;
+        countrySelect.dispatchEvent(new Event("change"));
+        bootstrap.Modal.getInstance(document.getElementById("searchModal")).hide();
+        return;
+      }
+    }
+
+    alert("Country not found. Please type the full country name.");
+  });
+
   setTimeout(() => {
     if (typeof L.easyButton === "function") {
+      // Search Button
+      L.easyButton('fa-search', () => {
+        new bootstrap.Modal(document.getElementById("searchModal")).show();
+      }, 'Search').addTo(map);
+
       // Wikipedia
       L.easyButton('fa-info-circle', () => {
         const countryName = countrySelect.options[countrySelect.selectedIndex].text;
