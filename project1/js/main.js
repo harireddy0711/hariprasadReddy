@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }).addTo(map);
 
   const countrySelect = document.getElementById("countrySelect");
-
   let cityClusterGroup = L.markerClusterGroup();
   let airportClusterGroup = L.markerClusterGroup();
   const overlays = {
@@ -26,6 +25,20 @@ document.addEventListener("DOMContentLoaded", function () {
         opt.textContent = country.name;
         countrySelect.appendChild(opt);
       });
+
+      // Detect user country after dropdown populated
+      fetch("https://ipapi.co/json/")
+        .then(res => res.json())
+        .then(loc => {
+          const userCountryCode = loc.country_code;
+          for (let opt of countrySelect.options) {
+            if (opt.value === userCountryCode) {
+              countrySelect.value = userCountryCode;
+              countrySelect.dispatchEvent(new Event("change"));
+              break;
+            }
+          }
+        });
     });
 
   countrySelect.addEventListener("change", () => {
@@ -46,6 +59,20 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 
+  const cityIcon = L.ExtraMarkers.icon({
+    icon: 'fa-city',
+    markerColor: 'blue',
+    shape: 'circle',
+    prefix: 'fa'
+  });
+
+  const airportIcon = L.ExtraMarkers.icon({
+    icon: 'fa-plane',
+    markerColor: 'green',
+    shape: 'square',
+    prefix: 'fa'
+  });
+
   function loadCityMarkers(code) {
     fetch(`php/getGeoMarkers.php?code=${code}`)
       .then(res => res.json())
@@ -54,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
         cityClusterGroup = L.markerClusterGroup();
 
         data.forEach(marker => {
-          const m = L.marker([marker.lat, marker.lng])
+          const m = L.marker([marker.lat, marker.lng], { icon: cityIcon })
             .bindPopup(`<strong>${marker.name}</strong><br>Population: ${marker.population}`);
           cityClusterGroup.addLayer(m);
         });
@@ -72,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
         airportClusterGroup = L.markerClusterGroup();
 
         data.forEach(marker => {
-          const m = L.marker([marker.lat, marker.lng])
+          const m = L.marker([marker.lat, marker.lng], { icon: airportIcon })
             .bindPopup(`<strong>Airport:</strong> ${marker.name}`);
           airportClusterGroup.addLayer(m);
         });
@@ -91,32 +118,8 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  const searchInput = document.getElementById("searchCountryInput");
-  const searchBtn = document.getElementById("searchCountryBtn");
-
-  searchBtn.addEventListener("click", () => {
-    const query = searchInput.value.trim().toLowerCase();
-    if (!query) return;
-
-    for (let i = 0; i < countrySelect.options.length; i++) {
-      const option = countrySelect.options[i];
-      if (option.text.toLowerCase() === query) {
-        countrySelect.value = option.value;
-        countrySelect.dispatchEvent(new Event("change"));
-        bootstrap.Modal.getInstance(document.getElementById("searchModal")).hide();
-        return;
-      }
-    }
-
-    alert("Country not found. Please type the full country name.");
-  });
-
   setTimeout(() => {
     if (typeof L.easyButton === "function") {
-      // Search Button
-      L.easyButton('fa-search', () => {
-        new bootstrap.Modal(document.getElementById("searchModal")).show();
-      }, 'Search').addTo(map);
 
       // Wikipedia
       L.easyButton('fa-info-circle', () => {
@@ -127,6 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <h4>${data.title}</h4>
             <img src="${data.image}" class="img-fluid my-2" />
             <p>${data.summary}</p>
+            <a href="${data.url}" class="btn btn-outline-primary" target="_blank">Read Full Article</a>
           `;
         });
       }, 'Info').addTo(map);
