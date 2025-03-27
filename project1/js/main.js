@@ -26,19 +26,29 @@ document.addEventListener("DOMContentLoaded", function () {
         countrySelect.appendChild(opt);
       });
 
-      // Detect user country after dropdown populated
-      fetch("https://ipapi.co/json/")
-        .then(res => res.json())
-        .then(loc => {
-          const userCountryCode = loc.country_code;
-          for (let opt of countrySelect.options) {
-            if (opt.value === userCountryCode) {
-              countrySelect.value = userCountryCode;
-              countrySelect.dispatchEvent(new Event("change"));
-              break;
-            }
-          }
-        });
+      // Detect user country via browser geolocation API
+if ("geolocation" in navigator) {
+  navigator.geolocation.getCurrentPosition(async position => {
+    const { latitude, longitude } = position.coords;
+
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
+    const data = await res.json();
+    const userCountry = data.address?.country_code?.toUpperCase();
+
+    if (userCountry) {
+      for (let opt of countrySelect.options) {
+        if (opt.value === userCountry) {
+          countrySelect.value = userCountry;
+          countrySelect.dispatchEvent(new Event("change"));
+          break;
+        }
+      }
+    }
+  }, err => {
+    console.warn("Geolocation failed or denied:", err.message);
+  });
+   }
+
     });
 
   countrySelect.addEventListener("change", () => {
