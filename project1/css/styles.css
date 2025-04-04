@@ -1,59 +1,116 @@
+/* === Global Reset === */
 body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-  
-  #map {
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  
-  .top-bar {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-  }
-  
-  .top-bar select {
-    font-size: 18px;
-  }
-  
-  .modal-body img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 10px 0;
-  }
-  
-  .modal-header {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
-  }
-  
-  .modal-content {
-    border-radius: 10px;
-  }
-  
-  img {
-    border-radius: 8px;
-  }
-  .easy-button-button {
-    background-color: #007bff !important;
-    color: white !important;
-    border-radius: 10px;
-  }
-  .easy-button-button:hover {
-    background-color: #0056b3 !important;
-  }
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* === Map Container === */
+#map {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* === Preloader === */
+#preloader {
+  position: fixed;
+  z-index: 9999;
+  background: white;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === Top Bar === */
+.top-bar {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 6px 8px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+#countrySelect {
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  height: auto;
+  line-height: 1.2;
+}
+
+
+/* === Cluster Marker Styling === */
+.marker-cluster-small {
+  background-color: rgba(0, 123, 255, 0.6);
+  color: white;
+  border: 2px solid #007bff;
+}
+
+.marker-cluster-medium {
+  background-color: rgba(255, 193, 7, 0.6);
+  color: white;
+  border: 2px solid #ffc107;
+}
+
+.marker-cluster-large {
+  background-color: rgba(220, 53, 69, 0.6);
+  color: white;
+  border: 2px solid #dc3545;
+}
+
+/* === Modals === */
+.modal-dialog {
+  max-width: 600px; /* Compact size for better screen fit */
+}
+
+.modal-content {
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 10px;
+}
+
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* Scrollable & clean layout */
+.modal-body {
+  padding: 1rem 1.2rem;
+  font-size: 0.95rem;
+}
+
+/* Image behavior */
+.modal-body img {
+  max-width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 1rem auto;
+}
+
+/* Table inside modals (especially wiki/info) */
+#wikiModalBody table {
+  margin: 0 auto;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+#wikiModalBody th,
+#wikiModalBody td {
+  padding: 8px 10px;
+  vertical-align: middle;
+  text-align: center;
+}
