@@ -43,6 +43,7 @@ if (!$exchangeData || $exchangeData['result'] !== 'success') {
 echo json_encode([
     "currency" => $currencyCode,
     "rates" => $exchangeData['conversion_rates'], // Rates from selected country's currency TO others
-    "updated" => date("D M d Y - H:i")
+    "updated" => date("c") 
+
 ]);
 ?>
