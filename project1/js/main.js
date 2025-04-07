@@ -266,8 +266,10 @@ document.addEventListener("DOMContentLoaded", function () {
               });
               const amountInput = document.getElementById("amountInput");
               const resultBox = document.getElementById("exchangeResult");
-              amountInput.value = "";
-              resultBox.textContent = "";
+              amountInput.value = "1";
+              const rate = data.rates[currencyTo.value];
+              resultBox.textContent = rate ? numeral(rate).format('0,0.00') : "";
+
               const calculate = () => {
                 const amount = parseFloat(amountInput.value);
                 const rate = data.rates[currencyTo.value];
@@ -286,4 +288,11 @@ document.addEventListener("DOMContentLoaded", function () {
       buttons.forEach(btn => L.easyButton(btn.icon, btn.handler, btn.title).addTo(map));
     }
   }, 300);
+  document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('hidden.bs.modal', function () {
+      document.body.classList.remove('modal-open');
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    });
+  });
+  
 });
