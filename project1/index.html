@@ -36,20 +36,20 @@
   
   <div id="map"></div>
   <div class="top-bar">
-    <div class="mb-3">
-      <label for="countrySelect" class="form-label">Select Country</label>
-      <select id="countrySelect" class="form-select"></select>
-    </div>
+    <label for="countrySelect" class="form-label me-2">Select Country</label>
+    <select id="countrySelect" class="form-select form-select-sm w-auto d-inline-block"></select>
+  </div>
+  
     
   </div>
 
   
-  <!-- Wiki Modal (Country Info) -->
+<!-- Wiki Modal (Country Info) -->
 <div class="modal fade" id="wikiModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-md">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Country Info</h5>
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title text-white">Country Info</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body" id="wikiModalBody"></div>
@@ -57,76 +57,69 @@
   </div>
 </div>
 
-
-  <!-- Images Modal -->
-  <div class="modal fade" id="imagesModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-md">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Country Images</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body" id="imagesModalBody"></div>
+<!-- Images Modal -->
+<div class="modal fade" id="imagesModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-md">
+    <div class="modal-content">
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title text-white">Country Images</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
+      <div class="modal-body" id="imagesModalBody"></div>
     </div>
   </div>
+</div>
 
-  
 <!-- Weather Modal -->
 <div class="modal fade" id="weatherModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Weather Information</h5>
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title text-white">Weather Information</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body" id="weatherModalBody">
-        <!-- JS will inject content here -->
+      <div class="modal-body" id="weatherModalBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Currency Converter Modal -->
+<div class="modal fade" id="currencyModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-md">
+    <div class="modal-content">
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title text-white">Exchange</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-6"><strong>Updated On</strong></div>
+          <div class="col-6 text-end" id="exchangeUpdated"></div>
+        </div>
+        <hr />
+        <p><strong>From:</strong> <span id="exchangeFrom"></span></p>
+        <label for="amountInput"><strong>Amount (from 1 to 1,000,000)</strong></label>
+        <input type="number" id="amountInput" class="form-control" min="1" max="1000000" />
+        <br />
+        <label for="currencyTo"><strong>Convert to</strong></label>
+        <select id="currencyTo" class="form-select"></select>
+        <br />
+        <p><strong>Result:</strong> <span id="exchangeResult"></span></p>
+        <button id="clearExchange" class="btn btn-warning mt-2">Clear</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
 
-
-
-
-  <!-- Currency Converter Modal -->
-  <div class="modal fade" id="currencyModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-md">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Exchange</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-6"><strong>Updated On</strong></div>
-            <div class="col-6 text-end" id="exchangeUpdated"></div>
-          </div>
-          <hr />
-          <p><strong>From:</strong> <span id="exchangeFrom"></span></p>
-          <label for="amountInput"><strong>Amount (from 1 to 1,000,000)</strong></label>
-          <input type="number" id="amountInput" class="form-control" min="1" max="1000000" />
-          <br />
-          <label for="currencyTo"><strong>Convert to</strong></label>
-          <select id="currencyTo" class="form-select"></select>
-          <br />
-          <p><strong>Result:</strong> <span id="exchangeResult"></span></p>
-          <button id="clearExchange" class="btn btn-warning mt-2">Clear</button>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- News Modal -->
+<!-- News Modal -->
 <div class="modal fade" id="newsModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Latest News</h5>
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title text-white">Latest News</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body" id="newsModalBody">
@@ -135,6 +128,7 @@
     </div>
   </div>
 </div>
+
 
 <script src="libs/leaflet/leaflet.js"></script>
 <script src="libs/bootstrap/bootstrap.bundle.min.js"></script>
