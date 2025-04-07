@@ -114,3 +114,11 @@ body, html {
   vertical-align: middle;
   text-align: center;
 }
+.modal-header.bg-dark {
+  color: white;
+}
+
+.modal-header.bg-dark .btn-close {
+  filter: invert(1);
+}
+
