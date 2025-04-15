@@ -1,0 +1,13 @@
+body {
+    padding: 20px;
+  }
+
+  #personnelTableBody td {
+    vertical-align: middle;
+  }
+
+  @media (max-width: 768px) {
+    .table td, .table th {
+      font-size: 14px;
+    }
+  }
