@@ -18,8 +18,7 @@ $(document).ready(function () {
             <tr>
               <td>${person.firstName} ${person.lastName}</td>
               <td>${person.email}</td>
-              <td>${person.jobTitle}</td>
-              <td>${person.department}</td>
+                            <td>${person.department}</td>
               <td>${person.location}</td>
               <td><button class="btn btn-sm btn-warning" data-id="${person.id}" data-bs-toggle="modal" data-bs-target="#editPersonnelModal">Edit</button></td>
               <td><button class="btn btn-sm btn-danger deletePersonnelBtn" data-id="${person.id}">Delete</button></td>
@@ -58,7 +57,6 @@ $(document).ready(function () {
               $('#firstName').val(person.firstName);
               $('#lastName').val(person.lastName);
               $('#email').val(person.email);
-              $('#jobTitle').val(person.jobTitle);
               $('#department').val(person.departmentID);
             }
           });
@@ -305,7 +303,6 @@ $('a[data-bs-target="#locations"]').on('shown.bs.tab', function () {
 
 
 });
-
 
 
 

@@ -3,3 +3,21 @@
   background-color: #0d6efd;
   color: #fff;
 }
+
+.nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-tabs {
+      margin-bottom: 0;
+    }
+    .tab-buttons > button {
+      display: none;
+    }
+    .tab-buttons.show-home #addEmployeeBtn,
+    .tab-buttons.show-departments #addDepartmentBtn,
+    .tab-buttons.show-locations #addLocationBtn {
+      display: inline-block;
+    }
+  
