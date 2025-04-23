@@ -1,23 +1,26 @@
-
-.nav-tabs .nav-link.active {
-  background-color: #0d6efd;
-  color: #fff;
+html,
+body {
+  background-color: #f9f6ee;
+  margin: 5px 0px 5px 2px;
+  padding: 5px 0px 5px 2px;
+  overflow: hidden;
 }
 
-.nav-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .nav-tabs {
-      margin-bottom: 0;
-    }
-    .tab-buttons > button {
-      display: none;
-    }
-    .tab-buttons.show-home #addEmployeeBtn,
-    .tab-buttons.show-departments #addDepartmentBtn,
-    .tab-buttons.show-locations #addLocationBtn {
-      display: inline-block;
-    }
-  
+section {
+  display: flex;
+  flex-flow: column;
+  height: calc(100vh - 20px);
+}
+
+.tab-content {
+  flex: 1;
+  overflow-y: scroll;
+}
+
+tr {
+  cursor: default;
+}
+
+.myBtn {
+  width: 70px;
+}

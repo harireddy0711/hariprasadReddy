@@ -1,103 +1,44 @@
 <?php
 
-	
+$executionStartTime = microtime(true);
+include("config.php");
 
-	$executionStartTime = microtime(true);
+header('Content-Type: application/json; charset=UTF-8');
 
-	include("config.php");
+$conn = new mysqli($cd_host, $cd_user, $cd_password, $cd_dbname, $cd_port, $cd_socket);
 
-	header('Content-Type: application/json; charset=UTF-8');
+if (mysqli_connect_errno()) {
+    $output['status']['code'] = "300";
+    $output['status']['name'] = "failure";
+    $output['status']['description'] = "database unavailable";
+    $output['data'] = [];
+    echo json_encode($output);
+    exit;
+}
 
-	$conn = new mysqli($cd_host, $cd_user, $cd_password, $cd_dbname, $cd_port, $cd_socket);
+$id = $_REQUEST['id'] ?? null;
 
-	if (mysqli_connect_errno()) {
-		
-		$output['status']['code'] = "300";
-		$output['status']['name'] = "failure";
-		$output['status']['description'] = "database unavailable";
-		$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-		$output['data'] = [];
+if (!$id) {
+    $output['status']['code'] = "400";
+    $output['status']['name'] = "bad request";
+    $output['status']['description'] = "Missing personnel ID";
+    echo json_encode($output);
+    exit;
+}
 
-		mysqli_close($conn);
+$query = $conn->prepare('SELECT id, firstName, lastName, email, jobTitle, departmentID FROM personnel WHERE id = ?');
+$query->bind_param("i", $id);
+$query->execute();
 
-		echo json_encode($output);
+$result = $query->get_result();
+$person = $result->fetch_assoc();
 
-		exit;
+$output['status']['code'] = "200";
+$output['status']['name'] = "ok";
+$output['status']['description'] = "success";
+$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
+$output['data'] = $person;
 
-	}	
-
-	// first query - SQL statement accepts parameters and so is prepared to avoid SQL injection.
-	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
-
-	$query = $conn->prepare('SELECT `id`, `firstName`, `lastName`, `email`, `jobTitle`, `departmentID` FROM `personnel` WHERE `id` = ?');
-
-	$query->bind_param("i", $_REQUEST['id']);
-
-	$query->execute();
-	
-	if (false === $query) {
-
-		$output['status']['code'] = "400";
-		$output['status']['name'] = "executed";
-		$output['status']['description'] = "query failed";	
-		$output['data'] = [];
-
-		mysqli_close($conn);
-
-		echo json_encode($output); 
-
-		exit;
-
-	}
-    
-	$result = $query->get_result();
-
-   	$personnel = [];
-
-	while ($row = mysqli_fetch_assoc($result)) {
-
-		array_push($personnel, $row);
-
-	}
-
-	// second query - does not accept parameters and so is not prepared
-
-	$query = 'SELECT id, name from department ORDER BY name';
-
-	$result = $conn->query($query);
-	
-	if (!$result) {
-
-		$output['status']['code'] = "400";
-		$output['status']['name'] = "executed";
-		$output['status']['description'] = "query failed";	
-		$output['data'] = [];
-
-		mysqli_close($conn);
-
-		echo json_encode($output); 
-
-		exit;
-
-	}
-   
-   	$department = [];
-
-	while ($row = mysqli_fetch_assoc($result)) {
-
-		array_push($department, $row);
-
-	}
-
-	$output['status']['code'] = "200";
-	$output['status']['name'] = "ok";
-	$output['status']['description'] = "success";
-	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data']['personnel'] = $personnel;
-	$output['data']['department'] = $department;
-	
-	mysqli_close($conn);
-
-	echo json_encode($output); 
-
+$conn->close();
+echo json_encode($output);
 ?>
