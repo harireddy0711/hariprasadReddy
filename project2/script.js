@@ -53,17 +53,25 @@ $(document).ready(function () {
   function loadPersonnel(callback = () => {}) {
     $.get("php/getAll.php?type=personnel", function (data) {
       const tbody = $("#personnelTableBody").empty();
-      data.data.forEach(person => {
-        if (!person.firstName && !person.lastName) return;
+      data.data.forEach((p) => {
+        if (!p.firstName && !p.lastName) return;
         tbody.append(`
           <tr>
-            <td>${person.firstName || ""} ${person.lastName || ""}</td>
-            <td>${person.jobTitle || ""}</td>
-            <td>${person.email || ""}</td>
-            <td>${person.department || ""}</td>
-            <td>${person.location || ""}</td>
-            <td><button class="btn btn-warning btn-sm edit-personnel" data-id="${person.id}">Edit</button></td>
-            <td><button class="btn btn-danger btn-sm delete-personnel" data-id="${person.id}">Delete</button></td>
+            <td>${p.firstName} ${p.lastName}</td>
+            <td>${p.jobTitle || ""}</td>
+            <td>${p.email || ""}</td>
+            <td>${p.department || ""}</td>
+            <td>${p.location || ""}</td>
+            <td>
+              <button class="btn btn-link text-warning p-0 edit-personnel" data-id="${p.id}" data-bs-toggle="modal" data-bs-target="#editPersonnelModal">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+            </td>
+            <td>
+              <button class="btn btn-link text-danger p-0 delete-personnel" data-id="${p.id}">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
           </tr>
         `);
       });
@@ -74,32 +82,46 @@ $(document).ready(function () {
   function loadDepartments() {
     $.get("php/getAllDepartments.php", function (res) {
       const tbody = $("#departmentTableBody").empty();
-      res.data.forEach(dept => {
+      res.data.forEach((d) => {
         tbody.append(`
           <tr>
-            <td>${dept.name}</td>
-            <td>${dept.locationName}</td>
-            <td><button class="btn btn-warning btn-sm edit-department" data-id="${dept.id}">Edit</button></td>
-            <td><button class="btn btn-danger btn-sm delete-department" data-id="${dept.id}">Delete</button></td>
+            <td>${d.name}</td>
+            <td>${d.locationName}</td>
+            <td>
+              <button class="btn btn-link text-warning p-0 edit-department" data-id="${d.id}" data-bs-toggle="modal" data-bs-target="#editDepartmentModal">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+            </td>
+            <td>
+              <button class="btn btn-link text-danger p-0 delete-department" data-id="${d.id}">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
           </tr>
         `);
       });
-    });
+    }, "json");
   }
 
   function loadLocations() {
     $.get("php/getAllLocations.php", function (res) {
       const tbody = $("#locationTableBody").empty();
-      res.data.forEach(loc => {
+      res.data.forEach((l) => {
         tbody.append(`
           <tr>
-            <td>${loc.name}</td>
-            <td><button class="btn btn-warning btn-sm edit-location" data-id="${loc.id}">Edit</button></td>
-            <td><button class="btn btn-danger btn-sm delete-location" data-id="${loc.id}">Delete</button></td>
+            <td>${l.name}</td>
+            <td>
+              <button class="btn btn-link text-warning p-0 edit-location" data-id="${l.id}" data-bs-toggle="modal" data-bs-target="#editLocationModal">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button class="btn btn-link text-danger p-0 delete-location" data-id="${l.id}">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
           </tr>
         `);
       });
-    });
+    }, "json");
   }
 
   // === Events ===
