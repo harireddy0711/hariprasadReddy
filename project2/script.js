@@ -1,30 +1,6 @@
 $(document).ready(function () {
   let currentTab = "personnel";
 
-  // Search filter logic
-  function applySearchFilter() {
-    const search = $("#searchInp").val().toLowerCase();
-    $("tbody tr").each(function () {
-      $(this).toggle($(this).text().toLowerCase().includes(search));
-    });
-  }
-
-  // epartment + location filter logic
-  function applyDropdownFilter() {
-    const selectedDept = $("#filterDepartment").val().toLowerCase();
-    const selectedLoc = $("#filterLocation").val().toLowerCase();
-
-    $("tbody#personnelTableBody tr").each(function () {
-      const row = $(this).text().toLowerCase();
-      const matchesDept = !selectedDept || row.includes(selectedDept);
-      const matchesLoc = !selectedLoc || row.includes(selectedLoc);
-      $(this).toggle(matchesDept && matchesLoc);
-    });
-
-    $("#filterModal").modal("hide");
-  }
-
-  // Load table data based on active tab
   function loadData() {
     if (currentTab === "personnel") {
       $("#filterBtn").show();
@@ -38,22 +14,38 @@ $(document).ready(function () {
     }
   }
 
+  function applySearchFilter() {
+    const search = $("#searchInp").val().toLowerCase();
+    $("tbody tr").each(function () {
+      $(this).toggle($(this).text().toLowerCase().includes(search));
+    });
+  }
+
+  function applyDropdownFilter() {
+    const dept = $("#filterDepartment").val().toLowerCase();
+    const loc = $("#filterLocation").val().toLowerCase();
+    $("#personnelTableBody tr").each(function () {
+      const text = $(this).text().toLowerCase();
+      const show = (!dept || text.includes(dept)) && (!loc || text.includes(loc));
+      $(this).toggle(show);
+    });
+  }
+
   function populateFilterDropdowns() {
     $.get("php/getAllDepartments.php", function (res) {
-      const select = $("#filterDepartment").empty().append(`<option value="">All Departments</option>`);
-      res.data.forEach(dept => select.append(`<option value="${dept.name}">${dept.name}</option>`));
+      const dept = $("#filterDepartment").empty().append('<option value="">All Departments</option>');
+      res.data.forEach(d => dept.append(`<option value="${d.name}">${d.name}</option>`));
     });
-
     $.get("php/getAllLocations.php", function (res) {
-      const select = $("#filterLocation").empty().append(`<option value="">All Locations</option>`);
-      res.data.forEach(loc => select.append(`<option value="${loc.name}">${loc.name}</option>`));
+      const loc = $("#filterLocation").empty().append('<option value="">All Locations</option>');
+      res.data.forEach(l => loc.append(`<option value="${l.name}">${l.name}</option>`));
     });
   }
 
   function loadPersonnel(callback = () => {}) {
-    $.get("php/getAll.php?type=personnel", function (data) {
+    $.get("php/getAll.php?type=personnel", function (res) {
       const tbody = $("#personnelTableBody").empty();
-      data.data.forEach((p) => {
+      res.data.forEach(p => {
         if (!p.firstName && !p.lastName) return;
         tbody.append(`
           <tr>
@@ -82,7 +74,7 @@ $(document).ready(function () {
   function loadDepartments() {
     $.get("php/getAllDepartments.php", function (res) {
       const tbody = $("#departmentTableBody").empty();
-      res.data.forEach((d) => {
+      res.data.forEach(d => {
         tbody.append(`
           <tr>
             <td>${d.name}</td>
@@ -100,13 +92,13 @@ $(document).ready(function () {
           </tr>
         `);
       });
-    }, "json");
+    });
   }
 
   function loadLocations() {
     $.get("php/getAllLocations.php", function (res) {
       const tbody = $("#locationTableBody").empty();
-      res.data.forEach((l) => {
+      res.data.forEach(l => {
         tbody.append(`
           <tr>
             <td>${l.name}</td>
@@ -121,22 +113,17 @@ $(document).ready(function () {
           </tr>
         `);
       });
-    }, "json");
+    });
   }
 
-  // === Events ===
+  // === Event Bindings ===
   $("#personnelBtn").click(() => { currentTab = "personnel"; loadData(); });
   $("#departmentsBtn").click(() => { currentTab = "departments"; loadData(); });
   $("#locationsBtn").click(() => { currentTab = "locations"; loadData(); });
   $("#refreshBtn").click(loadData);
   $("#searchInp").on("input", applySearchFilter);
-
-  $("#filterBtn").click(() => {
-    populateFilterDropdowns();
-    $("#filterModal").modal("show");
-  });
-
-  $("#applyFilterBtn").click(applyDropdownFilter);
+  $("#filterDepartment, #filterLocation").on("change", applyDropdownFilter);
+  $("#filterBtn").click(() => { populateFilterDropdowns(); $("#filterModal").modal("show"); });
 
   $("#addBtn").click(() => {
     if (currentTab === "personnel") {
@@ -156,25 +143,22 @@ $(document).ready(function () {
     }
   });
 
+  // === Populate Dropdowns for Edit Forms ===
   function populateDepartments(selector) {
     $.get("php/getAllDepartments.php", function (res) {
       const select = $(selector).empty();
-      res.data.forEach(dept => {
-        select.append(`<option value="${dept.id}">${dept.name}</option>`);
-      });
+      res.data.forEach(d => select.append(`<option value="${d.id}">${d.name}</option>`));
     });
   }
 
   function populateLocations(selector) {
     $.get("php/getAllLocations.php", function (res) {
       const select = $(selector).empty();
-      res.data.forEach(loc => {
-        select.append(`<option value="${loc.id}">${loc.name}</option>`);
-      });
+      res.data.forEach(l => select.append(`<option value="${l.id}">${l.name}</option>`));
     });
   }
 
-  // === Form Submits ===
+  // === Submits ===
   $("#editPersonnelForm").submit(function (e) {
     e.preventDefault();
     const data = {
@@ -219,7 +203,7 @@ $(document).ready(function () {
     });
   });
 
-  // === Edit Clicks ===
+  // === Edit buttons ===
   $(document).on("click", ".edit-personnel", function () {
     const id = $(this).data("id");
     $.get("php/getPersonnelByID.php", { id }, function (res) {
@@ -233,21 +217,19 @@ $(document).ready(function () {
       setTimeout(() => {
         $("#editPersonnelDepartment").val(p.departmentID);
       }, 200);
-      $("#editPersonnelModal").modal("show");
     });
   });
 
   $(document).on("click", ".edit-department", function () {
     const id = $(this).data("id");
     $.get("php/getDepartmentByID.php", { id }, function (res) {
-      const d = res.data;
+      const d = res.data[0];
       $("#editDepartmentID").val(d.id);
       $("#editDepartmentName").val(d.name);
       populateLocations("#editDepartmentLocation");
       setTimeout(() => {
         $("#editDepartmentLocation").val(d.locationID);
       }, 200);
-      $("#editDepartmentModal").modal("show");
     });
   });
 
@@ -257,32 +239,54 @@ $(document).ready(function () {
       const l = res.data;
       $("#editLocationID").val(l.id);
       $("#editLocationName").val(l.name);
-      $("#editLocationModal").modal("show");
     });
   });
 
-  // === Delete ===
-  $(document).on("click", ".delete-personnel", function () {
-    const id = $(this).data("id");
-    if (confirm("Delete this personnel?")) {
-      $.post("php/deletePersonnel.php", { id }, () => loadPersonnel(applySearchFilter));
+  // === Delete Buttons with Validation ===
+function checkBeforeDelete(type, id, callback) {
+  $.get("php/checkDeletable.php", { type, id }, function (res) {
+    if (res.allowed) {
+      $("#confirmDeleteModal")
+        .data("type", type)
+        .data("id", id)
+        .modal("show");
+    } else {
+      $("#warningModal").modal("show");
     }
-  });
+  }, "json");
+}
 
-  $(document).on("click", ".delete-department", function () {
-    const id = $(this).data("id");
-    if (confirm("Delete this department?")) {
-      $.post("php/deleteDepartmentByID.php", { id }, loadDepartments);
-    }
-  });
+$(document).on("click", ".delete-personnel", function () {
+  const id = $(this).data("id");
+  $("#confirmDeleteModal").data("type", "personnel").data("id", id).modal("show");
+});
 
-  $(document).on("click", ".delete-location", function () {
-    const id = $(this).data("id");
-    if (confirm("Delete this location?")) {
-      $.post("php/deleteLocation.php", { id }, loadLocations);
-    }
-  });
+$(document).on("click", ".delete-department", function () {
+  const id = $(this).data("id");
+  checkBeforeDelete("department", id);
+});
 
-  // Init
+$(document).on("click", ".delete-location", function () {
+  const id = $(this).data("id");
+  checkBeforeDelete("location", id);
+});
+
+// Final deletion action triggered from confirm modal
+$("#confirmDeleteBtn").click(function () {
+  const type = $("#confirmDeleteModal").data("type");
+  const id = $("#confirmDeleteModal").data("id");
+
+  const endpoints = {
+    personnel: "php/deletePersonnel.php",
+    department: "php/deleteDepartmentByID.php",
+    location: "php/deleteLocation.php"
+  };
+
+  $.post(endpoints[type], { id }, function () {
+    $("#confirmDeleteModal").modal("hide");
+    loadData();
+  });
+});
+
   loadData();
 });
