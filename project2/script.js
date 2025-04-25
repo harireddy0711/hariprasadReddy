@@ -122,8 +122,17 @@ $(document).ready(function () {
   $("#locationsBtn").click(() => { currentTab = "locations"; loadData(); });
   $("#refreshBtn").click(loadData);
   $("#searchInp").on("input", applySearchFilter);
-  $("#filterDepartment, #filterLocation").on("change", applyDropdownFilter);
   $("#filterBtn").click(() => { populateFilterDropdowns(); $("#filterModal").modal("show"); });
+  $("#filterDepartment").on("change", function () {
+    $("#filterLocation").val(""); // Clear location filter
+    applyDropdownFilter();
+  });
+  
+  $("#filterLocation").on("change", function () {
+    $("#filterDepartment").val(""); // Clear department filter
+    applyDropdownFilter();
+  });
+  
 
   $("#addBtn").click(() => {
     if (currentTab === "personnel") {
