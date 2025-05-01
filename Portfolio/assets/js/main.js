@@ -222,33 +222,3 @@
 
 })();
 
-// AJAX form submission
-const contactForm = document.querySelector('.php-email-form');
-
-if (contactForm) {
-  contactForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(contactForm);
-
-    fetch('forms/contact.php', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === 'success') {
-        document.querySelector('.sent-message').classList.add('d-block');
-        document.querySelector('.error-message').classList.remove('d-block');
-        contactForm.reset();
-      } else {
-        document.querySelector('.error-message').innerHTML = data.message;
-        document.querySelector('.error-message').classList.add('d-block');
-      }
-    })
-    .catch(error => {
-      document.querySelector('.error-message').innerHTML = 'Something went wrong!';
-      document.querySelector('.error-message').classList.add('d-block');
-    });
-  });
-}
