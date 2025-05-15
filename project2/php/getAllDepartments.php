@@ -21,7 +21,10 @@ if (mysqli_connect_errno()) {
 // Updated query to join with location table
 $query = 'SELECT d.id, d.name, d.locationID, l.name AS locationName 
           FROM department d 
-          LEFT JOIN location l ON d.locationID = l.id';
+          LEFT JOIN location l ON d.locationID = l.id 
+          ORDER BY d.name ASC';
+
+
 
 $result = $conn->query($query);
 
