@@ -2,8 +2,8 @@ $(document).ready(function () {
   let currentTab = "personnel";
 
   function loadData() {
-    $("#searchInp").val(""); // Clear search input on table refresh
-  
+    $("#searchInp").val("");
+
     if (currentTab === "personnel") {
       $("#filterBtn").prop("disabled", false).removeClass("disabled");
       loadPersonnel(() => {
@@ -14,9 +14,7 @@ $(document).ready(function () {
       $("#filterBtn").prop("disabled", true).addClass("disabled");
       currentTab === "departments" ? loadDepartments() : loadLocations();
     }
-    
   }
-  
 
   function applySearchFilter() {
     const search = $("#searchInp").val().toLowerCase();
@@ -46,63 +44,55 @@ $(document).ready(function () {
     });
   }
 
+  $('#filterModal').on('show.bs.modal', function () {
+    populateFilterDropdowns();
+  });
+
+
   function loadPersonnel(callback = () => {}) {
     $.get("php/getAll.php?type=personnel", function (res) {
       const tbody = document.getElementById("personnelTableBody");
-      tbody.innerHTML = ""; // Clear current table rows
-  
+      tbody.innerHTML = "";
+
       const frag = document.createDocumentFragment();
-  
+
       res.data.forEach(p => {
         if (!p.firstName && !p.lastName) return;
-  
+
         const row = document.createElement("tr");
-  
+
         const name = document.createElement("td");
         name.textContent = `${p.lastName}, ${p.firstName}`;
         row.appendChild(name);
-  
-        const jobTitle = document.createElement("td");
-        jobTitle.className = "d-none d-sm-table-cell";
-        jobTitle.textContent = p.jobTitle;
-        row.appendChild(jobTitle);
-  
+
         const email = document.createElement("td");
         email.className = "d-none d-md-table-cell";
         email.textContent = p.email;
         row.appendChild(email);
-  
+
         const department = document.createElement("td");
         department.className = "d-none d-md-table-cell";
         department.textContent = p.department;
         row.appendChild(department);
-  
+
         const location = document.createElement("td");
+        location.className = "text-end d-none d-sm-table-cell";
         location.textContent = p.location;
         row.appendChild(location);
-  
+
         const actions = document.createElement("td");
         actions.className = "text-end";
-  
-        const editBtn = document.createElement("button");
-        editBtn.className = "btn btn-link text-warning p-0 edit-personnel";
-        editBtn.setAttribute("data-id", p.id);
-        editBtn.setAttribute("data-bs-toggle", "modal");
-        editBtn.setAttribute("data-bs-target", "#editPersonnelModal");
-        editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
-  
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className = "btn btn-link text-danger p-0 delete-personnel";
-        deleteBtn.setAttribute("data-id", p.id);
-        deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-  
+
+        const editBtn = createActionButton("edit-personnel", p.id, "#editPersonnelModal", "fa-solid fa-pen-to-square");
+        const deleteBtn = createActionButton("delete-personnel", p.id, "#deletePersonnelModal", "fa-solid fa-trash fa-fw");
+
         actions.appendChild(editBtn);
         actions.appendChild(deleteBtn);
         row.appendChild(actions);
-  
+
         frag.appendChild(row);
       });
-  
+
       tbody.appendChild(frag);
       callback();
     }, "json");
@@ -130,17 +120,17 @@ $(document).ready(function () {
         const actions = document.createElement("td");
         actions.className = "text-end";
   
-        const editBtn = document.createElement("button");
-        editBtn.className = "btn btn-link text-warning p-0 edit-department";
-        editBtn.setAttribute("data-id", d.id);
-        editBtn.setAttribute("data-bs-toggle", "modal");
-        editBtn.setAttribute("data-bs-target", "#editDepartmentModal");
-        editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
-  
+        const editBtn = createActionButton("edit-department", d.id, "#editDepartmentModal", "fa-solid fa-pen-to-square");
         const deleteBtn = document.createElement("button");
-        deleteBtn.className = "btn btn-link text-danger p-0 delete-department";
+        deleteBtn.className = "btn btn-primary btn-sm me-1 delete-department";
         deleteBtn.setAttribute("data-id", d.id);
-        deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        const deleteIcon = document.createElement("i");
+        deleteIcon.className = "fa-solid fa-trash fa-fw";
+        deleteBtn.appendChild(deleteIcon);
+
+        deleteBtn.setAttribute("data-name", d.name); 
+
+
   
         actions.appendChild(editBtn);
         actions.appendChild(deleteBtn);
@@ -170,17 +160,9 @@ $(document).ready(function () {
         const actions = document.createElement("td");
         actions.className = "text-end";
   
-        const editBtn = document.createElement("button");
-        editBtn.className = "btn btn-link text-warning p-0 edit-location";
-        editBtn.setAttribute("data-id", l.id);
-        editBtn.setAttribute("data-bs-toggle", "modal");
-        editBtn.setAttribute("data-bs-target", "#editLocationModal");
-        editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
-  
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className = "btn btn-link text-danger p-0 delete-location";
-        deleteBtn.setAttribute("data-id", l.id);
-        deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        const editBtn = createActionButton("edit-location", l.id, "#editLocationModal", "fa-solid fa-pen-to-square");
+        const deleteBtn = createActionButton("delete-location", l.id, "#deleteLocationModal", "fa-solid fa-trash fa-fw");
+
   
         actions.appendChild(editBtn);
         actions.appendChild(deleteBtn);
@@ -192,7 +174,25 @@ $(document).ready(function () {
       tbody.appendChild(frag);
     });
   }
+
+  function createActionButton(type, id, target, iconClass, name = "") {
+  const btn = document.createElement("button");
+  btn.className = "btn btn-primary btn-sm me-1 " + type;
+  btn.setAttribute("data-id", id);
+  if (name) btn.setAttribute("data-name", name); 
+  btn.setAttribute("data-bs-toggle", "modal");
+  btn.setAttribute("data-bs-target", target);
+  const icon = document.createElement("i");
+  icon.className = iconClass;
+  btn.appendChild(icon);
+  return btn;
+}
+
+
   
+    $('#filterModal').on('show.bs.modal', function () {
+    populateFilterDropdowns();
+  });
 
   // === Event Bindings ===
   $("#personnelBtn").click(() => { currentTab = "personnel"; loadData(); });
@@ -290,6 +290,9 @@ $(document).ready(function () {
     });
   });
 
+  
+
+
   // === Edit buttons ===
   $(document).on("click", ".edit-personnel", function () {
     const id = $(this).data("id");
@@ -329,29 +332,29 @@ $(document).ready(function () {
     });
   });
 
- // === Updated Delete Buttons with Name Display ===
- $(document).on("click", ".delete-personnel", function () {
-  const id = $(this).data("id");
-  $.get("php/getPersonnelByID.php", { id }, function (res) {
-    const p = res.data;
-    $("#deletePersonnelForm input[name='id']").val(p.id);
-    $("#deletePersonnelModal .modal-body p").html(`Are you sure you want to delete <strong>${p.lastName}, ${p.firstName}</strong>?`);
-    $("#deletePersonnelModal").modal("show");
+ 
+
+ $('#deletePersonnelModal').on('show.bs.modal', function (e) {
+    const id = $(e.relatedTarget).data("id");
+    $.get("php/getPersonnelByID.php", { id }, function (res) {
+      const p = res.data;
+      $("#deletePersonnelForm input[name='id']").val(p.id);
+      $("#deletePersonnelModal .modal-body p").html(`Are you sure you want to delete <strong>${p.lastName}, ${p.firstName}</strong>?`);
+    });
   });
-});
 
-
-$(document).on("click", ".delete-department", function () {
+  $(document).on("click", ".delete-department", function () {
   const id = $(this).data("id");
 
+  // Check deletable first
   $.get("php/checkDeletable.php", { type: "department", id }, function (res) {
     if (res.allowed) {
-      // Show confirm modal
+      
       $("#confirmDeleteDepartmentForm input[name='id']").val(id);
       $("#confirmDeleteDeptName").text(res.name);
+      $("#confirmDeleteDepartmentModal").data("dept-id", id); 
       $("#confirmDeleteDepartmentModal").modal("show");
     } else {
-      // Show CANNOT delete modal with dynamic name and count
       $("#cantDeleteDeptName").text(res.name || "Unknown");
       $("#personnelCount").text(res.count || 0);
       $("#cantDeleteDepartmentModal").modal("show");
@@ -359,6 +362,20 @@ $(document).on("click", ".delete-department", function () {
   }, "json");
 });
 
+$('#confirmDeleteDepartmentModal').on('show.bs.modal', function () {
+  const id = $(this).data("dept-id"); 
+
+  if (!id) return;
+
+  $.get("php/checkDeletable.php", { type: "department", id }, function (res) {
+    if (!res.allowed) {
+      $("#confirmDeleteDepartmentModal").modal("hide");
+      $("#cantDeleteDeptName").text(res.name || "Unknown");
+      $("#personnelCount").text(res.count || 0);
+      $("#cantDeleteDepartmentModal").modal("show");
+    }
+  }, "json");
+});
 
 $("#confirmDeleteDepartmentForm").submit(function (e) {
   e.preventDefault();
@@ -371,17 +388,15 @@ $("#confirmDeleteDepartmentForm").submit(function (e) {
 
 
 
-
-
-$(document).on("click", ".delete-location", function () {
-  const id = $(this).data("id");
+$('#deleteLocationModal').on('show.bs.modal', function (e) {
+  const id = $(e.relatedTarget).data("id");
   $.get("php/getLocationByID.php", { id }, function (res) {
     const l = res.data;
     $("#deleteLocationForm input[name='id']").val(l.id);
     $("#deleteLocationModal .modal-body p").html(`Are you sure you want to delete <strong>${l.name}</strong>?`);
-    $("#deleteLocationModal").modal("show");
   });
 });
+
 
 // === Deletion Submit Handlers ===
 $("#deletePersonnelForm").submit(function (e) {
@@ -393,14 +408,7 @@ $("#deletePersonnelForm").submit(function (e) {
   });
 });
 
-$("#deleteDepartmentForm").submit(function (e) {
-  e.preventDefault();
-  const id = $(this).find("input[name='id']").val();
-  $.post("php/deleteDepartmentByID.php", { id }, function () {
-    $("#deleteDepartmentModal").modal("hide");
-    loadDepartments();
-  });
-});
+
 
 $("#deleteLocationForm").submit(function (e) {
   e.preventDefault();
