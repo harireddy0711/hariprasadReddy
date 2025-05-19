@@ -44,9 +44,7 @@ $(document).ready(function () {
     });
   }
 
-  $('#filterModal').on('show.bs.modal', function () {
-    populateFilterDropdowns();
-  });
+  
 
 
   function loadPersonnel(callback = () => {}) {
@@ -115,6 +113,7 @@ $(document).ready(function () {
   
         const location = document.createElement("td");
         location.textContent = d.locationName;
+        location.className = "text-end d-none d-sm-table-cell";
         row.appendChild(location);
   
         const actions = document.createElement("td");
@@ -188,11 +187,42 @@ $(document).ready(function () {
   return btn;
 }
 
+$('#filterModal').on('show.bs.modal', function () {
+  const currentDepartment = $('#filterDepartment').val();
+  const currentLocation = $('#filterLocation').val();
+
+  $.get("php/getAllDepartments.php", function (res) {
+    const deptSelect = $('#filterDepartment');
+    deptSelect.empty().append('<option value="">All Departments</option>');
+    res.data.forEach(d => {
+      deptSelect.append(`<option value="${d.name}">${d.name}</option>`);
+    });
+
+    
+    setTimeout(() => {
+      deptSelect.val(currentDepartment);
+    }, 50);
+  });
 
   
-    $('#filterModal').on('show.bs.modal', function () {
-    populateFilterDropdowns();
+  $.get("php/getAllLocations.php", function (res) {
+    const locSelect = $('#filterLocation');
+    locSelect.empty().append('<option value="">All Locations</option>');
+    res.data.forEach(l => {
+      locSelect.append(`<option value="${l.name}">${l.name}</option>`);
+    });
+
+    setTimeout(() => {
+      locSelect.val(currentLocation);
+    }, 50);
   });
+});
+
+
+
+
+  
+   
 
   // === Event Bindings ===
   $("#personnelBtn").click(() => { currentTab = "personnel"; loadData(); });
@@ -200,7 +230,10 @@ $(document).ready(function () {
   $("#locationsBtn").click(() => { currentTab = "locations"; loadData(); });
   $("#refreshBtn").click(loadData);
   $("#searchInp").on("input", applySearchFilter);
-  $("#filterBtn").click(() => { populateFilterDropdowns(); $("#filterModal").modal("show"); });
+  $("#filterBtn").click(() => {
+  $("#filterModal").modal("show");
+   });
+
   $("#filterDepartment").on("change", function () {
     $("#filterLocation").val(""); // Clear location filter
     applyDropdownFilter();
